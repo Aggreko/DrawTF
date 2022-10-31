@@ -1,0 +1,19 @@
+{
+    "cSpell.words": [
+        "apim",
+        "azurerm",
+        "drawtf",
+        "fixedsize",
+        "fontname",
+        "fontsize",
+        "imagepos",
+        "imagescale",
+        "labelloc",
+        "Resourcegroups",
+        "servicebus",
+        "Signalr",
+        "tfstate",
+        "UNPARENTED"
+    ],
+    "python.analysis.typeCheckingMode": "basic"
+}
