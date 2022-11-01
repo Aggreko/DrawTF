@@ -34,6 +34,8 @@ from draw.azure.resources.azurerm_windows_web_app_slot import WindowsWebAppSlot
 from draw.azure.resources.azurerm_app_service_slot import AppServiceSlot
 from draw.azure.resources.azurerm_storage_container import StorageContainer
 from draw.azure.resources.azurerm_network_security_group import NetworkSecurityGroup
+from draw.azure.resources.azurerm_servicebus_subscription import ServiceBusSubscription
+from draw.azure.resources.azurerm_servicebus_topic import ServiceBusTopic
 
 
 class AzureResourceFactory:
@@ -58,6 +60,8 @@ class AzureResourceFactory:
             ServicePlan.identifier(),
             ServiceBusNamespace.identifier(),
             ServiceBusQueue.identifier(),
+            ServiceBusTopic.identifier(),
+            ServiceBusSubscription.identifier(),
             AppServicePlan.identifier(),
             AppService.identifier(),
             FunctionAppLinux.identifier(),
@@ -142,6 +146,12 @@ class AzureResourceFactory:
         elif component.type == ServiceBusQueue.identifier():
             attrs["height"] = "1.8"
             return ServiceBusQueue.get_node(component, **attrs)
+        elif component.type == ServiceBusTopic.identifier():
+            attrs["height"] = "1.8"
+            return ServiceBusTopic.get_node(component, **attrs)
+        elif component.type == ServiceBusSubscription.identifier():
+            attrs["height"] = "1.8"
+            return ServiceBusSubscription.get_node(component, **attrs)
         elif component.type == AppServicePlan.identifier():
             attrs["height"] = "1.75"
             return AppServicePlan.get_node(component, **attrs)

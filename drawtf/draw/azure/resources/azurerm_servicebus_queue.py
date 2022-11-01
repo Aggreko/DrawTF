@@ -3,7 +3,9 @@
 from draw.common.component import Component
 from draw.common.resource import Resource
 from diagrams.azure import integration
-from typing import Dict
+from typing import List, Dict
+
+from draw.azure.resources.azurerm_servicebus_subscription import ServiceBusSubscription
 
 
 class ServiceBusQueue(Resource):
@@ -17,7 +19,7 @@ class ServiceBusQueue(Resource):
     @staticmethod
     def get_metadata(component: Component) -> str:
         """Get the metadata string from this components attributes."""
-        if "max_message_size_in_kilobytes" in component.attributes and "max_message_size_in_kilobytes" in component.attributes and "max_message_size_in_kilobytes" in component.attributes:
+        if "max_message_size_in_kilobytes" in component.attributes and "max_message_size_in_kilobytes" in component.attributes and "requires_session" in component.attributes:
             max_message_size_in_kilobytes = component.attributes['max_message_size_in_kilobytes']
             max_size_in_megabytes = component.attributes['max_size_in_megabytes']
             requires_session = component.attributes['requires_session']

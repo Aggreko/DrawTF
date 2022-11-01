@@ -6,6 +6,7 @@ from diagrams.azure import integration
 from typing import List, Dict
 
 from draw.azure.resources.azurerm_servicebus_queue import ServiceBusQueue
+from draw.azure.resources.azurerm_servicebus_topic import ServiceBusTopic
 
 
 class ServiceBusNamespace(Resource):
@@ -32,9 +33,11 @@ class ServiceBusNamespace(Resource):
         """Handle service bus namespace groupings."""
         servicebus_namespaces = [
             x for x in components if x.type.startswith(ServiceBusNamespace.identifier())]
+        servicebus_topics = ServiceBusTopic.group(components)
         servicebus_queues = [
             x for x in components if x.type.startswith(ServiceBusQueue.identifier())]
-
+        servicebus_queues = servicebus_queues + servicebus_topics
+        
         for servicebus_queue in servicebus_queues:
             servicebus_namespace_name = ""
             if "namespace_id" in servicebus_queue.attributes:
