@@ -36,6 +36,13 @@ from draw.azure.resources.azurerm_storage_container import StorageContainer
 from draw.azure.resources.azurerm_network_security_group import NetworkSecurityGroup
 from draw.azure.resources.azurerm_servicebus_subscription import ServiceBusSubscription
 from draw.azure.resources.azurerm_servicebus_topic import ServiceBusTopic
+from draw.azure.resources.azurerm_mssql_database import SqlServerDatabase
+from draw.azure.resources.azurerm_mssql_server import SqlServer
+from draw.azure.resources.azurerm_log_analytics_workspace import LogAnalyticsWorkspace
+from draw.azure.resources.zazurerm_databricks_workspace import DatabricksWorkspace
+from draw.azure.resources.databricks_azure_adls_gen2_mount import DatabricksGen2Mount
+from draw.azure.resources.databricks_cluster import DatabricksCluster
+from draw.azure.resources.azurerm_kubernetes_cluster import KubernetesCluster
 
 
 class AzureResourceFactory:
@@ -74,7 +81,14 @@ class AzureResourceFactory:
             CosmosSqlContainer.identifier(),
             CosmosSqlDatabase.identifier(),
             AppServiceSlot.identifier(),
-            NetworkSecurityGroup.identifier()
+            NetworkSecurityGroup.identifier(),
+            SqlServer.identifier(),
+            SqlServerDatabase.identifier(),
+            LogAnalyticsWorkspace.identifier(),
+            DatabricksWorkspace.identifier(),
+            DatabricksCluster.identifier(),
+            DatabricksGen2Mount.identifier(),
+            KubernetesCluster.identifier()
         ]
 
     @staticmethod
@@ -177,6 +191,27 @@ class AzureResourceFactory:
             return CosmosSqlDatabase.get_node(component, **attrs)
         elif component.type == NetworkSecurityGroup.identifier():
             return NetworkSecurityGroup.get_node(component, **attrs)
+        elif component.type == SqlServer.identifier():
+            attrs["height"] = "1.75"
+            return SqlServer.get_node(component, **attrs)
+        elif component.type == SqlServerDatabase.identifier():
+            attrs["height"] = "1.75"
+            return SqlServerDatabase.get_node(component, **attrs)
+        elif component.type == LogAnalyticsWorkspace.identifier():
+            attrs["height"] = "1.75"
+            return LogAnalyticsWorkspace.get_node(component, **attrs)
+        elif component.type == DatabricksWorkspace.identifier():
+            attrs["height"] = "1.75"
+            return DatabricksWorkspace.get_node(component, **attrs)
+        elif component.type == DatabricksGen2Mount.identifier():
+            attrs["height"] = "1.75"
+            return DatabricksGen2Mount.get_node(component, **attrs)
+        elif component.type == DatabricksCluster.identifier():
+            attrs["height"] = "1.9"
+            return DatabricksCluster.get_node(component, **attrs)
+        elif component.type == KubernetesCluster.identifier():
+            attrs["height"] = "1.8"
+            return KubernetesCluster.get_node(component, **attrs)
         else:
             logging.warning(
                 f"No resource icon for {component.type}: {component.name} is not yet supported")
@@ -196,13 +231,17 @@ class AzureResourceFactory:
             ServiceBusNamespace.group(components),
             CosmosAccount.group(components),
             Storage.group(components),
+            SqlServer.group(components),
+            DatabricksWorkspace.group(components),
             [x for x in components if x.type == KeyVault.identifier()],
             [x for x in components if x.type == AppConfig.identifier()],
             [x for x in components if x.type == Subnet.identifier()],
             [x for x in components if x.type == Signalr.identifier()],
             [x for x in components if x.type == ContainerGroup.identifier()],
             [x for x in components if x.type == ContainerRegistry.identifier()],
-            [x for x in components if x.type == NetworkSecurityGroup.identifier()]
+            [x for x in components if x.type == NetworkSecurityGroup.identifier()],
+            [x for x in components if x.type == LogAnalyticsWorkspace.identifier()],
+            [x for x in components if x.type == KubernetesCluster.identifier()]
         ]
 
         for resource_grouping in resources:
