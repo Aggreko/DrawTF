@@ -1,4 +1,4 @@
-"""Azure ApiManagementCertificate resource."""
+"""Azure DatabricksCluster resource."""
 
 from draw.common.component import Component
 from draw.common.resource import Resource

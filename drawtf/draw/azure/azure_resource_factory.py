@@ -39,10 +39,11 @@ from draw.azure.resources.azurerm_servicebus_topic import ServiceBusTopic
 from draw.azure.resources.azurerm_mssql_database import SqlServerDatabase
 from draw.azure.resources.azurerm_mssql_server import SqlServer
 from draw.azure.resources.azurerm_log_analytics_workspace import LogAnalyticsWorkspace
-from draw.azure.resources.zazurerm_databricks_workspace import DatabricksWorkspace
+from draw.azure.resources.azurerm_databricks_workspace import DatabricksWorkspace
 from draw.azure.resources.databricks_azure_adls_gen2_mount import DatabricksGen2Mount
 from draw.azure.resources.databricks_cluster import DatabricksCluster
 from draw.azure.resources.azurerm_kubernetes_cluster import KubernetesCluster
+from draw.azure.resources.azurerm_logic_app_workflow import LogicApp
 
 
 class AzureResourceFactory:
@@ -88,7 +89,8 @@ class AzureResourceFactory:
             DatabricksWorkspace.identifier(),
             DatabricksCluster.identifier(),
             DatabricksGen2Mount.identifier(),
-            KubernetesCluster.identifier()
+            KubernetesCluster.identifier(),
+            LogicApp.identifier()
         ]
 
     @staticmethod
@@ -212,6 +214,8 @@ class AzureResourceFactory:
         elif component.type == KubernetesCluster.identifier():
             attrs["height"] = "1.8"
             return KubernetesCluster.get_node(component, **attrs)
+        elif component.type == LogicApp.identifier():
+            return LogicApp.get_node(component, **attrs)
         else:
             logging.warning(
                 f"No resource icon for {component.type}: {component.name} is not yet supported")
@@ -241,7 +245,8 @@ class AzureResourceFactory:
             [x for x in components if x.type == ContainerRegistry.identifier()],
             [x for x in components if x.type == NetworkSecurityGroup.identifier()],
             [x for x in components if x.type == LogAnalyticsWorkspace.identifier()],
-            [x for x in components if x.type == KubernetesCluster.identifier()]
+            [x for x in components if x.type == KubernetesCluster.identifier()],
+            [x for x in components if x.type == LogicApp.identifier()]
         ]
 
         for resource_grouping in resources:
