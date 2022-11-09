@@ -3,14 +3,14 @@ import sys
 import click
 import json
 import os
-from typing import List
+from typing import Dict, List
 import logging
 
 from draw.azure import azure
 from draw.common.component import Component
+from draw.common.resources.draw_custom import DrawCustom
 
 UNPARENTED = "Unparented"
-
 
 @click.command()
 @click.option('--name', help='The diagram name.')
@@ -71,13 +71,15 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
         supported_nodes = azure.supported_nodes()
     else:
         raise Exception(f"Platform {platform} is not yet supported.")
-
+    
     components: List[Component] = []
 
     for resource in data["resources"]:
         resource_name = resource["name"]
-        mode = resource["mode"]
         type = resource["type"]
+        mode = "manual"
+        if ("mode" in resource):
+            mode = resource["mode"]
 
         if (not type in supported_nodes):
             print(f"Resource type {type} is not supported.")
@@ -102,18 +104,8 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
         if "links" in config_data:
             links = config_data["links"]
         if "components" in config_data:
-            config_components = config_data["components"]
-            
-            for instance in config_components:
-                resource_name = instance["name"]
-                type = instance["type"]
-                mode = instance["mode"]
-                resource_group_name = instance["resource_group_name"]
-                attributes = instance["attributes"]
-                
-                print(f"Adding resource (from config) {resource_name}-{type}")
-                components.append(Component(resource_name, type,
-                              mode, resource_group_name, attributes))
+            custom_components = get_custom_components(supported_nodes, config_data)
+            components = components + custom_components
             
     if (platform.lower() == 'azure'): 
         azure.draw(name, output_path, components, links)
@@ -122,6 +114,41 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
 
     return 0
 
-
+def get_custom_components(supported_nodes, config_data: Dict) -> List[Component]:
+    new_components = []
+    
+    if not "components" in config_data:
+        return new_components
+    
+    config_components = config_data["components"]  
+    
+    for instance in config_components:
+        resource_name = instance["name"]
+        type = instance["type"]
+        
+        if (not type in supported_nodes):
+            print(f"Resource type {type} is not supported.")
+            continue
+        
+        mode = "manual"
+        if ("mode" in instance):
+            mode = instance["mode"]
+            
+        custom = None
+        if ("custom" in instance):
+            custom = instance["custom"]
+            
+        resource_group_name = instance["resource_group_name"]
+        attributes = instance["attributes"]
+        
+        child_config_components = []
+        if ("components" in instance):
+            child_config_components = get_custom_components(supported_nodes, instance)
+            
+        print(f"Adding resource (from config) {resource_name}-{type}")
+        new_components.append(Component(resource_name, type, mode, resource_group_name, attributes, child_config_components, custom))
+            
+    return new_components
+    
 if __name__ == "__main__":
     sys.exit(main())  # type: ignore # pragma: no cover

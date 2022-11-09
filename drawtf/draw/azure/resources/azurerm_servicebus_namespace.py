@@ -20,7 +20,10 @@ class ServiceBusNamespace(Resource):
     @staticmethod
     def get_metadata(component: Component) -> str:
         """Get the metadata string from this components attributes."""
-        return f"sku: {component.attributes['sku']}"
+        if ("sku" in component.attributes):
+            return f"sku: {component.attributes['sku']}"
+        else:
+            return ""
 
     @staticmethod
     def get_node(component: Component, **attrs: Dict):
@@ -45,8 +48,7 @@ class ServiceBusNamespace(Resource):
                 servicebus_namespace_name = servicebus_namespace_id.split("/")[-1]
             else:
                 servicebus_namespace_name = servicebus_queue.attributes["namespace_name"]
-            
-            
+
             servicebus_namespace = next(filter(
                     lambda x: x.attributes["name"] == servicebus_namespace_name, servicebus_namespaces), None)
 

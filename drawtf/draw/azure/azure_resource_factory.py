@@ -44,6 +44,7 @@ from draw.azure.resources.databricks_azure_adls_gen2_mount import DatabricksGen2
 from draw.azure.resources.databricks_cluster import DatabricksCluster
 from draw.azure.resources.azurerm_kubernetes_cluster import KubernetesCluster
 from draw.azure.resources.azurerm_logic_app_workflow import LogicApp
+from draw.common.resources.draw_custom import DrawCustom
 
 
 class AzureResourceFactory:
@@ -90,7 +91,8 @@ class AzureResourceFactory:
             DatabricksCluster.identifier(),
             DatabricksGen2Mount.identifier(),
             KubernetesCluster.identifier(),
-            LogicApp.identifier()
+            LogicApp.identifier(),
+            DrawCustom.identifier()
         ]
 
     @staticmethod
@@ -216,6 +218,8 @@ class AzureResourceFactory:
             return KubernetesCluster.get_node(component, **attrs)
         elif component.type == LogicApp.identifier():
             return LogicApp.get_node(component, **attrs)
+        elif component.type == DrawCustom.identifier():
+            return DrawCustom.get_node(component, **attrs)
         else:
             logging.warning(
                 f"No resource icon for {component.type}: {component.name} is not yet supported")
@@ -253,4 +257,6 @@ class AzureResourceFactory:
             resource_groups = ResourceGroup.group(
                 resource_groups, resource_grouping)
 
-        return resource_groups
+        customs = [x for x in components if x.type == DrawCustom.identifier()]
+        
+        return resource_groups + customs

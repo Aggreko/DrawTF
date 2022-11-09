@@ -5,6 +5,7 @@ import logging
 from diagrams import Diagram, Cluster, Edge, Node
 from draw.common.component import Component
 from draw.azure.azure_resource_factory import AzureResourceFactory
+from draw.common.resources.draw_custom import DrawCustom
 
 
 def supported_nodes():
@@ -51,16 +52,25 @@ def draw(name: str, output_path: str, components: List[Component], links=[]):
 
 def __draw(components: List[Component], group: str, cache: dict):
     """Group related azure resources together."""
-    graph_attrs = {
-        "fontsize": "9",
-        "margin": "30.0,1.0",
-        "fontname":"times bold"
-    }
     for component in components:
+        bgcolor = "#F8F8F8"
+        if (component.mode == "managed"):
+            bgcolor = "#e5fbe5"
+            
+        graph_attrs = {
+            "fontsize": "9",
+            "margin": "30.0,1.0",
+            "fontname":"times bold",
+            "bgcolor": bgcolor,
+        }
+        
         if (component.is_cluster()):
-            with Cluster(f"{component.type}: {component.name}".upper(), graph_attr=graph_attrs) as cluster:
+            with Cluster(component.get_label().upper(), graph_attr=graph_attrs) as cluster:
                 __draw(component.components, component.key, cache)
-                __draw_component(component, group, cache)
+                
+                if (not component.type == DrawCustom.identifier()):
+                    __draw_component(component, group, cache)
+                    
                 cache[component.name] = cluster
         else:
             __draw_component(component, group, cache)

@@ -34,7 +34,7 @@ class ServiceBusTopic(Resource):
     def get_node(component: Component, **attrs: Dict):
         """Get the underlying diagrams type."""
         metadata = ServiceBusTopic.get_metadata(component)
-        return integration.ServiceBus(Resource.get_name(component, metadata), **attrs)
+        return integration.SystemTopic(Resource.get_name(component, metadata), **attrs)
     
     @staticmethod
     def group(components: List[Component]) -> List[Component]:

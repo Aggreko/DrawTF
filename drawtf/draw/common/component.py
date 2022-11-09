@@ -6,7 +6,7 @@ from typing import List
 class Component:
     """Component class which builds up a tree of objects."""
 
-    def __init__(self, name: str, type: str, mode: str, resource_group: str, attributes: dict):
+    def __init__(self, name: str, type: str, mode: str, resource_group: str, attributes: dict, components = [], custom = None):
         """Ctor for component."""
         self.name = name
         self.type = type
@@ -14,8 +14,16 @@ class Component:
         self.mode = mode
         self.resource_group = resource_group
         self.attributes = attributes
-        self.components: List[Component] = []
+        self.components: List[Component] = components.copy()
+        self.custom = custom
+        
 
+    def get_label(self):
+        """Get Components from structure."""
+        if (self.type == "draw_custom"):
+            return self.name
+        else:
+            return f"{self.type}: {self.name}"
 
     def get_components(self):
         """Get Components from structure."""

@@ -12,10 +12,8 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--name","IPG Docs (Dev)",
-                "--state","./tests/ipg/eds/app.tfstate",
-                "--output-path","./tests/ipg/eds/app",
-                "--verbose"
+                "--name","Sample Draw",
+                "--json-config-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\ams-2.json"
             ]
         }
     ]

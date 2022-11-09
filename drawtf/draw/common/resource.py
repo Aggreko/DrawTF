@@ -12,10 +12,15 @@ class Resource(ABC):
     def get_name(component: Component, metadata: str) -> str:
         max_length = 25
         expression = "(.{" + str(max_length) + "})"
-        component_type = component.type if len(component.type) <= max_length else re.sub(
-            expression, "\\1\n", component.type, 0, re.DOTALL)
+        
         component_name = component.name if len(component.name) <= max_length else re.sub(
             expression, "\\1\n", component.name, 0, re.DOTALL)
+        
+        if (component.type == "draw_custom"):
+            return component_name
+        
+        component_type = component.type if len(component.type) <= max_length else re.sub(
+            expression, "\\1\n", component.type, 0, re.DOTALL)
         if metadata != "":
             metadata = metadata if len(metadata) <= max_length else re.sub(
                 expression, "\\1\n", metadata, 0, re.DOTALL)
