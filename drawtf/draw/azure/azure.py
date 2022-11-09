@@ -71,7 +71,7 @@ def __draw(components: List[Component], group: str, cache: dict):
                 if (not component.type == DrawCustom.identifier()):
                     __draw_component(component, group, cache)
                     
-                cache[component.name] = cluster
+                cache['cluster-' + component.key] = cluster
         else:
             __draw_component(component, group, cache)
 
