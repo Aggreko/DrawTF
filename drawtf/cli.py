@@ -13,7 +13,7 @@ UNPARENTED = "Unparented"
 
 
 @click.command()
-@click.option('--name', help='The diagram name.', required=True)
+@click.option('--name', help='The diagram name.')
 @click.option('--state', help='The tfstate file to run against.')
 @click.option('--platform', help="The platform to use 'azure' or 'aws', only 'azure' currently supported",  default='azure')
 @click.option('--output-path', help='Output path if to debug generated json populated.')
@@ -114,6 +114,12 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
             json.dump(resources, f, indent=4)
 
     if (platform == 'azure'):
+        if (name == None and "name" in config_data):
+            name = config_data["name"]
+            
+        if (name == None):
+            name = "Design"
+            
         azure.draw(name, output_path, components, links)
     else:
         print(f"Platform {platform} is not yet supported.")
