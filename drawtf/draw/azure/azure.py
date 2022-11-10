@@ -97,6 +97,10 @@ def __link(links, cache: dict):
             logging.error(f"link does not contain and to and from: {link}")
             continue
         else:
+            if not (link["from"] in cache and link["to"] in cache):
+                logging.warning(f"Ignoring link as object not in component cache: {link}")
+                continue
+            
             component_from = cache[link["from"]]
             component_to = cache[link["to"]]
 

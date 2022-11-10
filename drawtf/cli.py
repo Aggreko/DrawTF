@@ -18,13 +18,14 @@ UNPARENTED = "Unparented"
 @click.option('--platform', help="The platform to use 'azure' or 'aws', only 'azure' currently supported",  default='azure')
 @click.option('--output-path', help='Output path if to debug generated json populated.')
 @click.option('--json-config-path', help='Config file path if populated.')
+@click.option('--json-config-override-path', help='Config file with overrides path to merge with main one if populated.')
 @click.option('--verbose', is_flag=True, default=False, help='Add verbose logs.')
-def main(name: str, state: str, platform: str, output_path: str, json_config_path: str, verbose: bool):
+def main(name: str, state: str, platform: str, output_path: str, json_config_path: str, json_config_override_path: str, verbose: bool):
     """Console script for drawtf."""
     # Set logging level
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
-        
+
     # Load the config if it exists
     config_data = None
     if (not json_config_path is None):
@@ -36,6 +37,18 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
             
         cf = open(json_config_path)
         config_data = json.load(cf)
+        
+    
+    if (not json_config_override_path is None):
+        logging.info(f"Reading config from {json_config_override_path}.")
+        
+        if (not os.path.exists(json_config_override_path)):
+            raise click.BadParameter(
+                message="The path to the override config file does not exist.")
+            
+        cfo = open(json_config_override_path)
+        config_data_override = json.load(cfo)
+        config_data.update(config_data_override)
 
     # Get the state file passed in or in config and set it up
     if (not config_data == None and "state" in config_data and state == None):
@@ -63,9 +76,16 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
     if (not config_data == None and output_path == None and "outputPath" in config_data):
         output_path = config_data["outputPath"]
         
+    if (output_path == None and not json_config_override_path == None):
+        output_path = os.path.splitext(json_config_override_path)[0]
+        
     if (output_path == None and not json_config_path == None):
         output_path = os.path.splitext(json_config_path)[0]
-
+        
+    excludes = []
+    if (not config_data == None and "excludes" in config_data):
+        excludes = config_data["excludes"]
+    
     supported_nodes = []
     if (platform.lower() == 'azure'):
         supported_nodes = azure.supported_nodes()
@@ -95,16 +115,21 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
             if ("name" in attributes):
                 resource_name = attributes["name"]
 
-            print(f"Adding resource {resource_name}-{type}")
-            components.append(Component(resource_name, type,
-                              mode, resource_group_name, attributes))
+            component = Component(resource_name, type,
+                              mode, resource_group_name, attributes);
+            
+            if (not component.key in excludes):
+                print(f"Adding resource {component.key}")
+                components.append(component)
+            else:
+                print(f"Excluding resource {component.key}")
 
     links = None
     if (not config_data is None):
         if "links" in config_data:
             links = config_data["links"]
         if "components" in config_data:
-            custom_components = get_custom_components(supported_nodes, config_data)
+            custom_components = get_custom_components(excludes, supported_nodes, config_data)
             components = components + custom_components
             
     if (platform.lower() == 'azure'): 
@@ -114,7 +139,7 @@ def main(name: str, state: str, platform: str, output_path: str, json_config_pat
 
     return 0
 
-def get_custom_components(supported_nodes, config_data: Dict) -> List[Component]:
+def get_custom_components(excludes, supported_nodes, config_data: Dict) -> List[Component]:
     new_components = []
     
     if not "components" in config_data:
@@ -143,10 +168,15 @@ def get_custom_components(supported_nodes, config_data: Dict) -> List[Component]
         
         child_config_components = []
         if ("components" in instance):
-            child_config_components = get_custom_components(supported_nodes, instance)
-            
-        print(f"Adding resource (from config) {resource_name}-{type}")
-        new_components.append(Component(resource_name, type, mode, resource_group_name, attributes, child_config_components, custom))
+            child_config_components = get_custom_components(excludes, supported_nodes, instance)
+        
+        component = Component(resource_name, type, mode, resource_group_name, attributes, child_config_components, custom)
+        
+        if (not component.key in excludes):
+            print(f"Adding resource (from config) {component.key}")
+            new_components.append(component)
+        else:
+            print(f"Excluding resource (from config) {component.key}")
             
     return new_components
     
