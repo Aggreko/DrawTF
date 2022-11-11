@@ -36,6 +36,6 @@ setup(
     py_modules=['drawtf', 'app'],
     test_suite='tests',
     url='https://github.com/Aggreko/DrawTF',
-    version='0.1.0',
+    version='0.2.0',
     zip_safe=False,
 )
