@@ -32,7 +32,7 @@ setup(
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
-    keywords='drawtf,terraform,ci/cd',
+    keywords='drawtf,terraform,ci/cd,design,architecture,diagrams,graphviz',
     name='drawtf',
     packages=find_packages(include=['drawtf', 'drawtf.*']),
     test_suite='tests',

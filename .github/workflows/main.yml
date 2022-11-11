@@ -23,7 +23,8 @@ jobs:
         python -m pip install tox tox-gh-actions
     - name: Test with tox
       run: tox
-    - name: Publish a Python distribution to PyPI
+    - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
+        packages_dir: .tox/dist
