@@ -7,9 +7,8 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-requirements = ['Click>=7.0', 'diagrams==0.22.0']
-
-test_requirements = ['pytest>=3', ]
+with open("requirements.txt", "r", encoding="utf-8") as fh:
+    requirements = fh.read()
 
 setup(
     author="Aggreko",
@@ -24,19 +23,18 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Draw diagrams from tf state files",
-    entry_points={
-        'console_scripts': [
-            'drawtf=drawtf.cli:main',
-        ],
-    },
+    entry_points='''
+        [console_scripts]
+        drawtf=drawtf:main
+    ''',
     install_requires=requirements,
     license="MIT license",
     include_package_data=True,
     keywords='drawtf,terraform,ci/cd,design,architecture,diagrams,graphviz',
     name='drawtf',
-    packages=find_packages(include=['drawtf', 'drawtf.*']),
+    packages=find_packages(),
+    py_modules=['drawtf', 'app'],
     test_suite='tests',
-    tests_require=test_requirements,
     url='https://github.com/Aggreko/DrawTF',
     version='0.1.0',
     zip_safe=False,

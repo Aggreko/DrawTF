@@ -8,12 +8,12 @@
             "name": "Python: DrawTF CLI App",
             "type": "python",
             "request": "launch",
-            "program": "./drawtf/cli.py",
+            "program": "./drawtf.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
                 "--json-config-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\ams-2.json",
-                "--json-config-override-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\ams-2-dashboard.json"
+                "--json-config-override-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\sites\\ams-2-dashboard.json"
             ]
         }
     ]
