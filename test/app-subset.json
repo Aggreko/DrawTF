@@ -1,0 +1,6 @@
+{
+    "name": "Aggreko Application (Subset)",
+    "excludes": [ 
+        "AnotherApp-draw_custom"
+    ]
+}  

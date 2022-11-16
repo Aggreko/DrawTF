@@ -1,0 +1,58 @@
+{
+  "name": "Aggreko Application (All Resources)",
+  "state": "./test/app.tfstate",
+  "components": [
+      {
+          "name": "Aggreko",
+          "type": "draw_custom",
+          "resource_group_name": "",
+          "attributes":{},
+          "components": [
+              {
+                  "name": "InternalDB",
+                  "type": "draw_custom",
+                  "resource_group_name": "",
+                  "custom": "diagrams.azure.database.DatabaseForMysqlServers",
+                  "attributes": {}
+              },
+              {
+                  "name": "App",
+                  "type": "draw_custom",
+                  "resource_group_name": "",
+                  "custom": "diagrams.onprem.compute.Server",
+                  "attributes": {}
+              },
+              {
+                  "name": "AnotherApp",
+                  "type": "draw_custom",
+                  "resource_group_name": "",
+                  "custom": "diagrams.onprem.compute.Server",
+                  "attributes": {}
+              }
+          ]
+      }
+  ],
+"links": [
+      {
+          "from": "App-draw_custom",
+          "to": "InternalDB-draw_custom",
+          "color": "firebrick",
+          "label": "Write",
+          "type": "solid"
+      },
+      {
+          "from": "AnotherApp-draw_custom",
+          "to": "InternalDB-draw_custom",
+          "color": "firebrick",
+          "label": "Write",
+          "type": "dotted"
+      },
+      {
+          "from": "App-draw_custom",
+          "to": "storageaccount-azurerm_storage_account",
+          "color": "darkgreen",
+          "type": "dashed"
+      }
+  ],
+  "excludes": []
+} 

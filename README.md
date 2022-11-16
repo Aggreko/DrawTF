@@ -97,8 +97,9 @@ If we use a config file with the fields below, this will set the name for the de
 ```
 
 ```console 
-foo@bar:~$ drawtf --json-config-path ./app.json    
+foo@bar:~$ drawtf --json-config-path ./test/app.json    
 ``` 
+![Example](test\app.png)
 
 By running the command above pointing to the config file, this will set the name and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app.png**.
 
@@ -116,24 +117,18 @@ Providing an override config alongside our main config file with the fields belo
 ```
 
 ```console 
-foo@bar:~$ drawtf |                                          
-    --json-config-path ./app.json |               
-    --json-config-override-path ./app-subset.json | 
+foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json
 ```
+![Example](test\app-subset.png)
 
 By running the command above pointing to the config file and override files, this will set the name from the override and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app-subset.png**.
 
 ### Override config File and CLI overrides
 
 ```console 
-foo@bar:~$ drawtf |                                          
-    --json-config-path ./app.json |               
-    --json-config-override-path ./app-subset.json | 
-    --name "Aggreko Application (New Title)" |        
-    --state ./test/sample.tfstate |                
-    --output-path ./test/sample |                  
-    --verbose                                                                           
+foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json --name "Aggreko Application (Sample)" --state ./test/app.tfstate --output-path ./test/sample --verbose                                                                           
 ```
+![Example](test\sample.png)
 
 The command above, though using the same config files, can override all for the name, state file path and output path. Outputs from will create the design in the directory **test** with the name **sample.png**.
 
