@@ -99,7 +99,7 @@ If we use a config file with the fields below, this will set the name for the de
 ```console 
 foo@bar:~$ drawtf --json-config-path ./test/app.json    
 ``` 
-![Example](test\app.png)
+![Example](https://github.com/aggreko/drawtf/blob/main/test/app.png?raw=true)
 
 By running the command above pointing to the config file, this will set the name and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app.png**.
 
@@ -119,7 +119,7 @@ Providing an override config alongside our main config file with the fields belo
 ```console 
 foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json
 ```
-![Example](test\app-subset.png)
+![Example](https://github.com/aggreko/drawtf/blob/main/test/app-subset.png?raw=true)
 
 By running the command above pointing to the config file and override files, this will set the name from the override and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app-subset.png**.
 
@@ -128,7 +128,7 @@ By running the command above pointing to the config file and override files, thi
 ```console 
 foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json --name "Aggreko Application (Sample)" --state ./test/app.tfstate --output-path ./test/sample --verbose                                                                           
 ```
-![Example](test\sample.png)
+![Example](https://github.com/aggreko/drawtf/blob/main/test/sample.png?raw=true)
 
 The command above, though using the same config files, can override all for the name, state file path and output path. Outputs from will create the design in the directory **test** with the name **sample.png**.
 
