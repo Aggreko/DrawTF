@@ -1,4 +1,4 @@
-[![PyPI Version](https://img.shields.io/pypi/v/drawtf.svg)](https://pypi.python.org/v/drawtf)
+[![PyPI Version](https://img.shields.io/pypi/v/drawtf.svg)](https://pypi.python.org/project/drawtf) ![Latest Build](https://github.com/aggreko/drawtf/actions/workflows/main.yml/badge.svg)
 
 # drawtf
 Draw diagrams which include Cloud resources using TF state files or without them. Inspired by the [Diagrams](https://github.com/mingrammer/diagrams) package and a burning desire to not have to manually keep architecture diagrams updated, this was born.
@@ -136,6 +136,25 @@ foo@bar:~$ drawtf |
 ```
 
 The command above, though using the same config files, can override all for the name, state file path and output path. Outputs from will create the design in the directory **test** with the name **sample.png**.
+
+## Github Actions Steps
+
+Yes you can run this via GitHub actions or devops pipelines.
+
+```yaml
+      - name: Setup Graphviz
+        uses: ts-graphviz/setup-graphviz@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'
+      - name: Generate Diagram
+        run: |
+          python -m pip install --upgrade pip
+          pip install drawtf
+          drawtf --help
+          drawtf --json-config-path "./static/images/test/test.json"
+```
 
 ## Early days
 
