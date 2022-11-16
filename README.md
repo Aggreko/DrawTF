@@ -1,45 +1,142 @@
+[![PyPI Version](https://img.shields.io/pypi/v/drawtf.svg)](https://pypi.python.org/v/drawtf)
+
 # drawtf
+Draw diagrams which include Cloud resources using TF state files or without them. Inspired by the [Diagrams](https://github.com/mingrammer/diagrams) package and a burning desire to not have to manually keep architecture diagrams updated, this was born.
 
-Draw diagrams from tf state files. You can add a bunch of options and also suppliment it wil config files etc.
+## Prerequisites
+* Install Python
+* Install [Graphviz](https://graphviz.org/)
+  
+## Install
+```console
+foo@bar:~$ python -m pip install --upgrade pip
+foo@bar:~$ pip install drawtf
+foo@bar:~$ drawtf --help
 
-NOTE: Azure support only for now.
+Usage: drawtf [OPTIONS]
 
-## Features
+  Console script for drawtf.
 
-### flags
+Options:
+  --name TEXT                     The diagram name.
+  --state TEXT                    The tfstate file to run against.
+  --platform TEXT                 The platform to use 'azure' or 'aws', only
+                                  'azure' currently supported
 
-```bash 
-python drawtf.py --name Aggreko IPG Application (Dev) |
-        --state ./tests/test/sample.tfstate |
-        --json-config-path ./tests/test/config.json |
-        --output-path ./tests/test/sample |
-        --verbose
+  --output-path TEXT              Output path if to debug generated json    
+                                  populated.
+
+  --json-config-path TEXT         Config file path if populated.
+  --json-config-override-path TEXT
+                                  Config file with overrides path to merge  
+                                  with main one if populated.
+
+  --verbose                       Add verbose logs.
+  --help                          Show this message and exit.
 ```
+
+## Usage
+There are a few ways we can create diagrams here, all options on the CLI are optional, and it is basically just the order which you create them that draws a diagram.
+
+### Sample config File (app.json)
+If we use a config file with the fields below, this will set the name for the designs title, import a state file, and add some custom components not in the state file, The final section at the bottom draws the lines between the resources.
+
+```json 
+{
+    "name": "Aggreko Application (All Resources)",
+    "state": "../../application.tfstate",
+    "components": [
+        {
+            "name": "Aggreko",
+            "type": "draw_custom",
+            "resource_group_name": "",
+            "attributes":{},
+            "components": [
+                {
+                    "name": "InternalDB",
+                    "type": "draw_custom",
+                    "resource_group_name": "",
+                    "custom": "diagrams.azure.database.DatabaseForMysqlServers",
+                    "attributes": {}
+                },
+                {
+                    "name": "App",
+                    "type": "draw_custom",
+                    "resource_group_name": "",
+                    "custom": "diagrams.onprem.compute.Server",
+                    "attributes": {}
+                },
+                {
+                    "name": "AnotherApp",
+                    "type": "draw_custom",
+                    "resource_group_name": "",
+                    "custom": "diagrams.onprem.compute.Server",
+                    "attributes": {}
+                }
+            ]
+        }
+    ],
+	"links": [
+        {
+            "from": "App-draw_custom",
+            "to": "InternalDB-draw_custom",
+            "color": "darkgreen",
+            "label": "Write",
+            "type": "dotted"
+        },
+        {
+            "from": "AnotherApp-draw_custom",
+            "to": "InternalDB-draw_custom",
+            "color": "darkgreen",
+            "label": "Write",
+            "type": "dotted"
+        }
+    ],
+    "excludes": []
+}                                            
+```
+
+```console 
+foo@bar:~$ drawtf --json-config-path ./app.json    
+``` 
+
+By running the command above pointing to the config file, this will set the name and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app.png**.
+
+### Override config File (app-subset.json)
+
+Providing an override config alongside our main config file with the fields below, this will override the initial the designs title but still use the same state file and components from the original and attempt to join the links if all of the resources are available. You will notice an excludes section, if the keys for each resource added are in this list, then it will exclude those items.
 
 ```json
 {
-    "links": [
-        { 
-            "from": "apim-exp-product-app-dev-azurerm_api_management", 
-            "to": "kv-product-app-dev-azurerm_key_vault",
-            "color": "darkgreen",
-            "type": "dashed",
-            "label": "Write only"
-        }
+    "name": "Aggreko Application (Subset)",
+    "excludes": [ 
+        "AnotherApp-draw_custom"
     ]
-}
+}  
 ```
 
+```console 
+foo@bar:~$ drawtf |                                          
+    --json-config-path ./app.json |               
+    --json-config-override-path ./app-subset.json | 
+```
 
-### TODO
+By running the command above pointing to the config file and override files, this will set the name from the override and grab other resources from the state file linked. Outputs from will create the design in the same sub-folder with the name **app-subset.png**.
 
-- [ ] Azure: SQL (MSSQL, MySQL, etc)
-- [ ] Azure: Data engineering resources
-- [ ] Other clouds
+### Override config File and CLI overrides
 
-## Credits
+```console 
+foo@bar:~$ drawtf |                                          
+    --json-config-path ./app.json |               
+    --json-config-override-path ./app-subset.json | 
+    --name "Aggreko Application (New Title)" |        
+    --state ./test/sample.tfstate |                
+    --output-path ./test/sample |                  
+    --verbose                                                                           
+```
 
-This package was created with Cookiecutter and the audreyr/cookiecutter-pypackage project template.
+The command above, though using the same config files, can override all for the name, state file path and output path. Outputs from will create the design in the directory **test** with the name **sample.png**.
 
-* Cookiecutter: https://github.com/audreyr/cookiecutter
-* audreyr/cookiecutter-pypackage: https://github.com/audreyr/cookiecutter-pypackage
+## Early days
+
+Just an FYI, its early days here and is still a development style project. That said we are using for all of our projects internally using TF, but loads of resources types are still to be added.

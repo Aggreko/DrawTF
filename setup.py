@@ -23,6 +23,8 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Draw diagrams from tf state files",
+    long_description=readme,
+    long_description_content_type='text/markdown',
     entry_points='''
         [console_scripts]
         drawtf=drawtf:main
@@ -36,6 +38,6 @@ setup(
     py_modules=['drawtf', 'app'],
     test_suite='tests',
     url='https://github.com/Aggreko/DrawTF',
-    version='0.2.0',
+    version='0.3.0',
     zip_safe=False,
 )
