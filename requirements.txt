@@ -3,3 +3,4 @@ wheel==0.33.6
 twine==1.14.0
 Click==7.1.2
 diagrams==0.22.0
+watchdog==2.1.9

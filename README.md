@@ -15,27 +15,44 @@ foo@bar:~$ drawtf --help
 
 Usage: drawtf [OPTIONS]
 
-  Console script for drawtf.
+  Top level command for drawtf.
 
 Options:
-  --name TEXT                     The diagram name.
-  --state TEXT                    The tfstate file to run against.
-  --platform TEXT                 The platform to use 'azure' or 'aws', only
-                                  'azure' currently supported
+  --help  Show this message and exit.
 
-  --output-path TEXT              Output path if to debug generated json    
-                                  populated.
+Commands:
+  draw   Draw a single design from config and settings.
+  watch  Watch a directory for changes to draw.
 
-  --json-config-path TEXT         Config file path if populated.
-  --json-config-override-path TEXT
-                                  Config file with overrides path to merge  
-                                  with main one if populated.
+foo@bar:~$ drawtf draw --help
 
-  --verbose                       Add verbose logs.
-  --help                          Show this message and exit.
+Usage: drawtf draw [OPTIONS]
+
+  Draw a single design from config and settings.
+
+Options:
+  --name TEXT              The diagram name.
+  --state TEXT             The tfstate file to run against.
+  --platform TEXT          The platform to use 'azure' or 'aws', only 'azure'
+                           currently supported
+
+  --output-path TEXT       Output path if to debug generated json populated.
+  --json-config-path TEXT  Config file path if populated.
+  --verbose                Add verbose logs.
+  --help                   Show this message and exit.
+
+foo@bar:~$ drawtf watch --help
+
+Usage: drawtf watch [OPTIONS]
+
+  Watch a directory for changes to draw.
+
+Options:
+  --directory TEXT  Directory to watch for changes in.
+  --help            Show this message and exit.
 ```
 
-## Usage
+## Draw
 There are a few ways we can create diagrams here, all options on the CLI are optional, and it is basically just the order which you create them that draws a diagram.
 
 ### Sample config File (app.json)
@@ -97,7 +114,7 @@ If we use a config file with the fields below, this will set the name for the de
 ```
 
 ```console 
-foo@bar:~$ drawtf --json-config-path ./test/app.json    
+foo@bar:~$ drawtf draw --json-config-path ./test/app.json    
 ``` 
 ![Example](https://github.com/aggreko/drawtf/blob/main/test/app.png?raw=true)
 
@@ -110,6 +127,7 @@ Providing an override config alongside our main config file with the fields belo
 ```json
 {
     "name": "Aggreko Application (Subset)",
+    "base": ".//test//app.json",
     "excludes": [ 
         "AnotherApp-draw_custom"
     ]
@@ -117,7 +135,7 @@ Providing an override config alongside our main config file with the fields belo
 ```
 
 ```console 
-foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json
+foo@bar:~$ drawtf draw --json-config-path ./test/app-subset.json
 ```
 ![Example](https://github.com/aggreko/drawtf/blob/main/test/app-subset.png?raw=true)
 
@@ -126,11 +144,39 @@ By running the command above pointing to the config file and override files, thi
 ### Override config File and CLI overrides
 
 ```console 
-foo@bar:~$ drawtf --json-config-path ./test/app.json --json-config-override-path ./test/app-subset.json --name "Aggreko Application (Sample)" --state ./test/app.tfstate --output-path ./test/sample --verbose                                                                           
+foo@bar:~$ drawtf draw --json-config-path ./test/app-subset.json --name "Aggreko Application (Sample)" --state ./test/app.tfstate --output-path ./test/sample --verbose                                                                           
 ```
 ![Example](https://github.com/aggreko/drawtf/blob/main/test/sample.png?raw=true)
 
 The command above, though using the same config files, can override all for the name, state file path and output path. Outputs from will create the design in the directory **test** with the name **sample.png**.
+
+## Watch
+
+It is now possible to simply watch a folder for *.json files to change or be created, this will then pick up the changes and draw designs as required.
+
+```console
+foo@bar:~$ drawtf watch --directory ./test   
+
+Starting watch for *.json files...
+Watching in .//test...
+Modified file .//test\app.json, drawing...
+Adding resource APPLICATION_DEV-azurerm_resource_group
+Adding resource storageaccount-azurerm_storage_account
+Adding resource (from config) InternalDB-draw_custom
+Adding resource (from config) App-draw_custom
+Adding resource (from config) AnotherApp-draw_custom
+Adding resource (from config) Aggreko-draw_custom
+.//test\app.json done.
+Modified file .//test\app-subset.json, drawing...
+Adding resource APPLICATION_DEV-azurerm_resource_group
+Adding resource storageaccount-azurerm_storage_account
+Adding resource (from config) InternalDB-draw_custom
+Adding resource (from config) App-draw_custom
+Excluding resource (from config) AnotherApp-draw_custom
+Adding resource (from config) Aggreko-draw_custom
+WARNING:root:Ignoring link as object not in component cache: {'from': 'AnotherApp-draw_custom', 'to': 'InternalDB-draw_custom', 'color': 'firebrick', 'label': 'Write', 'type': 'dotted'}
+.//test\app-subset.json done.
+```
 
 ## Github Actions Steps
 

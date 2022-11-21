@@ -11,6 +11,7 @@
         "imagescale",
         "labelloc",
         "Resourcegroups",
+        "secho",
         "servicebus",
         "Signalr",
         "tfstate",

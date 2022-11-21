@@ -1,5 +1,6 @@
 {
     "name": "Aggreko Application (Subset)",
+    "base": ".//test//app.json",
     "excludes": [ 
         "AnotherApp-draw_custom"
     ]

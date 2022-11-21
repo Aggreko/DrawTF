@@ -5,15 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: DrawTF CLI App",
+            "name": "drawtf draw",
             "type": "python",
             "request": "launch",
             "program": "./drawtf.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--json-config-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\ams-2.json",
-                "--json-config-override-path", "C:\\source\\aggreko\\Design\\static\\images\\ams\\sites\\ams-2-dashboard.json"
+                "--json-config-path", ".//test//app-subset.json"
+            ]
+        },
+        {
+            "name": "drawtf watch",
+            "type": "python",
+            "request": "launch",
+            "program": "./drawtf.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--directory", ".//test"
             ]
         }
     ]
