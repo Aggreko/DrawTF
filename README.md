@@ -178,9 +178,11 @@ WARNING:root:Ignoring link as object not in component cache: {'from': 'AnotherAp
 .//test\app-subset.json done.
 ```
 
-## Github Actions Steps
+## CI/CD Steps
 
 Yes you can run this via GitHub actions or devops pipelines.
+
+### GitHub Actions
 
 ```yaml
       - name: Setup Graphviz
@@ -194,7 +196,20 @@ Yes you can run this via GitHub actions or devops pipelines.
           python -m pip install --upgrade pip
           pip install drawtf
           drawtf --help
-          drawtf --json-config-path "./static/images/test/test.json"
+          drawtf draw --json-config-path "./test/app.json"
+```
+
+### Azure Devops
+
+```yaml
+      - script: sudo apt-get -yq install graphviz
+        displayName: Setup Graphviz
+      - script: |
+          python -m pip install --upgrade pip
+          pip install drawtf
+          drawtf --help
+          drawtf draw --json-config-path "./test/app.json"
+        displayName: Generate Diagram
 ```
 
 ## Early days
