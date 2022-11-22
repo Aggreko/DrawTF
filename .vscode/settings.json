@@ -9,6 +9,7 @@
         "fontsize",
         "imagepos",
         "imagescale",
+        "labeljust",
         "labelloc",
         "Resourcegroups",
         "secho",

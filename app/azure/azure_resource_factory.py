@@ -104,7 +104,7 @@ class AzureResourceFactory:
             "fontsize": "8",
             "fixedsize": "true",
             "labelloc": "b",
-            "width": "1",
+            "width": "1.2",
             "height": "1.5",
             "imagepos": "tc",
             "imagescale": "true",

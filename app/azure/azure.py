@@ -44,8 +44,13 @@ def draw(name: str, output_path: str, components: List[Component], links=[]):
         __link(links, cache)
         if (not tag_string == ""): 
             attrs = {
+                    "fixedsize": "true",
+                    "labelloc": "t",
+                    "labeljust": "r",
+                    "width":"2.5",
                     "shape":"plaintext", 
-                    "fontsize": "9"
+                    "fontsize": "9",
+                    "margin": "10.0,1.0",
                 }
             Node(label=tag_string, **attrs)
 
@@ -60,7 +65,6 @@ def __draw(components: List[Component], group: str, cache: dict):
         graph_attrs = {
             "fontsize": "9",
             "margin": "30.0,1.0",
-            "fontname":"times bold",
             "bgcolor": bgcolor,
         }
         
