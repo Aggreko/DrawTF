@@ -1,6 +1,7 @@
 """Responsible for drawing azure resources"""
 from typing import List
 import logging
+import datetime
 
 from diagrams import Diagram, Cluster, Edge, Node
 from app.common.component import Component
@@ -22,6 +23,7 @@ def draw(name: str, output_path: str, components: List[Component], links=[]):
     for component in components:
         if "tags" in component.attributes:
             tags.update(component.attributes["tags"])
+    tags["Design produced"] = str(datetime.datetime.now())[:16]
     
     tag_string = ""
     if len(tags.keys()) > 0:
@@ -35,18 +37,16 @@ def draw(name: str, output_path: str, components: List[Component], links=[]):
 
     graph_attr = {
         "splines": "ortho",
-        "layout": "dot",
-        "fontname":"times bold"
+        "layout": "dot"
     }
     with Diagram(name, show=False, direction="TB", filename=output_path, graph_attr=graph_attr):
         __draw(grouped_components, "root", cache)
         __link(links, cache)
-        if (not tag_string == ""):
+        if (not tag_string == ""): 
             attrs = {
-                "shape":"plaintext", 
-                "fontsize": "9",
-                "fontname":"times italic"
-            }
+                    "shape":"plaintext", 
+                    "fontsize": "9"
+                }
             Node(label=tag_string, **attrs)
 
 

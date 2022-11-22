@@ -61,7 +61,7 @@ If we use a config file with the fields below, this will set the name for the de
 ```json 
 {
     "name": "Aggreko Application (All Resources)",
-    "state": "../../application.tfstate",
+    "state": "./test/app.tfstate",
     "components": [
         {
             "name": "Aggreko",

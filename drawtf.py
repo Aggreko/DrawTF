@@ -85,4 +85,4 @@ main.add_command(draw)
 main.add_command(watch)
 
 if __name__ == "__main__":
-    sys.exit(watch())  # type: ignore # pragma: no cover
+    sys.exit(draw())  # type: ignore # pragma: no cover
