@@ -8,7 +8,9 @@ import logging
 
 from app.azure import azure
 from app.common.component import Component
-from azure.storage.blob import ContainerClient
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
+from azure.mgmt.storage import StorageManagementClient
 
 UNPARENTED = "Unparented"
 
@@ -72,19 +74,26 @@ def commonDraw(name, state, platform, output_path, json_config_path, verbose):
     
     if (not state == None and not os.path.exists(state)):
         click.secho("The path to the state file does not exist.", fg='red')
-        if ("storage-container" in config_data and "DRAWTF_STORAGE_CONNECTION" in os.environ):
+        if ("storage-azure" in config_data):
+            storage_config = config_data["storage-azure"]
             remote_state = str(state).strip("./")
-            click.secho(f"Checking if file '{remote_state}' exists on storage container '{config_data['storage-container']}'.", fg='yellow')
-            container_client = ContainerClient.from_connection_string(os.environ["DRAWTF_STORAGE_CONNECTION"], config_data['storage-container'])
+            click.secho(f"Checking if file '{remote_state}' exists on storage container '{storage_config['account']}/{storage_config['container']}'.", fg='yellow')
+            default_credential = DefaultAzureCredential()
+            storage_client = StorageManagementClient(default_credential, storage_config['subscription-id'])
+            storage_keys = storage_client.storage_accounts.list_keys(storage_config['resource-group'], storage_config['account'])
+            storage_keys = {v.key_name: v.value for v in storage_keys.keys}  # type: ignore
+            connection = f"DefaultEndpointsProtocol=https;AccountName={storage_config['account']};AccountKey={storage_keys['key1']};EndpointSuffix=core.windows.net"
+            blob_service_client = BlobServiceClient.from_connection_string(connection)
+            container_client = blob_service_client.get_container_client(storage_config['container'])
             blob_client = container_client.get_blob_client(remote_state)
             
             if blob_client.exists():
-                click.secho(f"Found state file '{remote_state}' on container '{config_data['storage-container']}'.", fg='green')
+                click.secho(f"Found state file '{remote_state}' on container '{storage_config['account']}/{storage_config['container']}'.", fg='green')
                 blob_data = blob_client.download_blob()
                 data_bytes = blob_data.readall()
                 data = json.loads(data_bytes.decode('utf-8'))
             else:
-                click.secho(f"Blob '{remote_state}' doesn't exist on '{config_data['storage-container']}'.", fg='red')
+                click.secho(f"Blob '{remote_state}' doesn't exist on '{storage_config['account']}/{storage_config['container']}'.", fg='red')
         else:
             click.secho("No storage container or store connection string defined.", fg='red')
     else:
