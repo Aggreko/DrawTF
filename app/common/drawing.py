@@ -8,6 +8,7 @@ import logging
 
 from app.azure import azure
 from app.common.component import Component
+from azure.storage.blob import ContainerClient
 
 UNPARENTED = "Unparented"
 
@@ -71,6 +72,21 @@ def commonDraw(name, state, platform, output_path, json_config_path, verbose):
     
     if (not state == None and not os.path.exists(state)):
         click.secho("The path to the state file does not exist.", fg='red')
+        if ("storage-container" in config_data and "DRAWTF_STORAGE_CONNECTION" in os.environ):
+            remote_state = str(state).strip("./")
+            click.secho(f"Checking if file '{remote_state}' exists on storage container '{config_data['storage-container']}'.", fg='yellow')
+            container_client = ContainerClient.from_connection_string(os.environ["DRAWTF_STORAGE_CONNECTION"], config_data['storage-container'])
+            blob_client = container_client.get_blob_client(remote_state)
+            
+            if blob_client.exists():
+                click.secho(f"Found state file '{remote_state}' on container '{config_data['storage-container']}'.", fg='green')
+                blob_data = blob_client.download_blob()
+                data_bytes = blob_data.readall()
+                data = json.loads(data_bytes.decode('utf-8'))
+            else:
+                click.secho(f"Blob '{remote_state}' doesn't exist on '{config_data['storage-container']}'.", fg='red')
+        else:
+            click.secho("No storage container or store connection string defined.", fg='red')
     else:
         if (not state == None):
             f = open(state)

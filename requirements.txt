@@ -4,3 +4,5 @@ twine==1.14.0
 Click==7.1.2
 diagrams==0.22.0
 watchdog==2.1.9
+azure-storage-blob==12.14.1
+python-dotenv==0.21.0

@@ -5,6 +5,7 @@ from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
 from app.common.drawing import commonDraw
+from dotenv import load_dotenv
 
 @click.group()
 def main():
@@ -20,6 +21,7 @@ def main():
 @click.option('--verbose', is_flag=True, default=False, help='Add verbose logs.')
 def draw(name: str, state: str, platform: str, output_path: str, json_config_path: str, verbose: bool):
     """Draw a single design from config and settings."""
+    load_dotenv()
     return commonDraw(name, state, platform, output_path, json_config_path, verbose)
 
 last_trigger_time = time.time()
@@ -28,6 +30,7 @@ last_trigger_time = time.time()
 @click.option('--directory', help='Directory to watch for changes in.')
 def watch(directory: str):
     """Watch a directory for changes to draw."""
+    load_dotenv()
     click.secho("Starting watch for *.json files...", fg='yellow')
     
     patterns = ["*.json"]
