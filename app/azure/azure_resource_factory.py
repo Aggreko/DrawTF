@@ -44,6 +44,7 @@ from app.azure.resources.databricks_azure_adls_gen2_mount import DatabricksGen2M
 from app.azure.resources.databricks_cluster import DatabricksCluster
 from app.azure.resources.azurerm_kubernetes_cluster import KubernetesCluster
 from app.azure.resources.azurerm_logic_app_workflow import LogicApp
+from app.azure.resources.azurerm_static_site import StaticWebApp
 from app.common.resources.draw_custom import DrawCustom
 
 
@@ -92,7 +93,8 @@ class AzureResourceFactory:
             DatabricksGen2Mount.identifier(),
             KubernetesCluster.identifier(),
             LogicApp.identifier(),
-            DrawCustom.identifier()
+            DrawCustom.identifier(),
+            StaticWebApp.identifier()
         ]
 
     @staticmethod
@@ -220,6 +222,9 @@ class AzureResourceFactory:
             return LogicApp.get_node(component, **attrs)
         elif component.type == DrawCustom.identifier():
             return DrawCustom.get_node(component, **attrs)
+        elif component.type == StaticWebApp.identifier():
+            attrs["height"] = "1.75"
+            return StaticWebApp.get_node(component, **attrs)
         else:
             logging.warning(
                 f"No resource icon for {component.type}: {component.name} is not yet supported")
@@ -250,7 +255,8 @@ class AzureResourceFactory:
             [x for x in components if x.type == NetworkSecurityGroup.identifier()],
             [x for x in components if x.type == LogAnalyticsWorkspace.identifier()],
             [x for x in components if x.type == KubernetesCluster.identifier()],
-            [x for x in components if x.type == LogicApp.identifier()]
+            [x for x in components if x.type == LogicApp.identifier()],
+            [x for x in components if x.type == StaticWebApp.identifier()]
         ]
 
         for resource_grouping in resources:
